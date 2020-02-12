@@ -7,7 +7,7 @@ import csv
 import os
 import sys
 import logging
-from __main__ import vtk, qt, ctk, slicer
+import vtk, qt, ctk, slicer
 from random import randint
 from slicer.ScriptedLoadableModule import *
 

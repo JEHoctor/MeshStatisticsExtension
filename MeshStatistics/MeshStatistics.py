@@ -34,7 +34,7 @@ class MeshStatistics(ScriptedLoadableModule):
 class MeshStatisticsWidget(ScriptedLoadableModuleWidget):
     def setup(self):
         ScriptedLoadableModuleWidget.setup(self)
-        print("-------Mesh Statistic Widget Setup-------")
+        logging.debug("-------Mesh Statistic Widget Setup-------")
         # -------------------------------------------------------------------------------------
         self.modelList = list()
         self.fieldList = list()
@@ -385,7 +385,7 @@ class MeshStatisticsLogic(ScriptedLoadableModuleLogic):
             valueArray = numpy.array(valueList)
         else:
             if ROIArray.GetNumberOfTuples() != fieldArray.GetNumberOfTuples():
-                print('Size of ROIArray and fieldArray are not the same!!!')
+                logging.warning('Size of ROIArray and fieldArray are not the same!!!')
                 bool = False
             else:
                 for i in range(0, fieldArray.GetNumberOfTuples()):
@@ -711,7 +711,7 @@ class MeshStatisticsTest(ScriptedLoadableModuleTest):
         )
         for url, name, loader in downloads:
             filePath = slicer.app.temporaryPath + '/' + name
-            print(filePath)
+            logging.info(filePath)
             if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
                 logging.info('Requesting download %s from %s...\n' % (name, url))
                 urllib.request.urlretrieve(url, filePath)
@@ -737,7 +737,7 @@ class MeshStatisticsTest(ScriptedLoadableModuleTest):
 
     def testStorageValue(self):
         logic = MeshStatisticsLogic()
-        print(' Test storage of Values: ')
+        logging.info(' Test storage of Values: ')
         arrayValue = vtk.vtkDoubleArray()
         arrayMask = vtk.vtkDoubleArray()
         for i in range(0, 1000, 2):
@@ -759,32 +759,32 @@ class MeshStatisticsTest(ScriptedLoadableModuleTest):
         a = 0
         for i in listOfRandomNumber:
             if arrayValue.GetValue(i) != array[a]:
-                print('        Failed', a, array[a], i, arrayValue.GetValue(i))
+                logging.warning('        Failed', a, array[a], i, arrayValue.GetValue(i))
                 return False
             a += 1
-        print('         Passed')
+        logging.info('         Passed')
         return True
             
     def testMinMaxMeanFunctions(self):
         logic = MeshStatisticsLogic()
-        print('Test min, max, mean, and std: ')
+        logging.info('Test min, max, mean, and std: ')
         array = self.defineArrays(logic, 1, 1001)
         min, max = logic.computeMinMax(array)
         mean = logic.computeMean(array)
         std = logic.computeStandardDeviation(array)
-        print('min=', min, 'max=', max, 'mean=', mean, 'std=', std)
+        logging.info('min=', min, 'max=', max, 'mean=', mean, 'std=', std)
         if min != 1.0 or max != 1000.0 or mean != 500.5 or std != 288.675:
-            print('      Failed! ')
+            logging.warning('      Failed! ')
             return False
         else:
-            print('      Passed! ')
+            logging.info('      Passed! ')
         return True
 
     def testPercentileFunction(self):
         logic = MeshStatisticsLogic()
         # pair number of value:
-        print(' TEST Percentile ')
-        print('     TEST Pair number of values ')
+        logging.info(' TEST Percentile ')
+        logging.info('     TEST Pair number of values ')
         array = self.defineArrays(logic, 1, 1001)
         percentile5 = logic.computePercentile(array, 0.05)
         percentile15 = logic.computePercentile(array, 0.15)
@@ -794,12 +794,12 @@ class MeshStatisticsTest(ScriptedLoadableModuleTest):
         percentile85 = logic.computePercentile(array, 0.85)
         percentile95 = logic.computePercentile(array, 0.95)
         if percentile5 != 50 or percentile15 != 150 or percentile25 != 250 or percentile50 != 500 or percentile75 != 750 or percentile85 != 850 or percentile95 != 950:
-            print('         Failed ! ')
+            logging.warning('         Failed ! ')
             return False
         else:
-            print('         Passed')
+            logging.info('         Passed')
         # odd number of value:
-        print('     TEST Odd number of values ')
+        logging.info('     TEST Odd number of values ')
         array = self.defineArrays(logic, 1, 1000)
         percentile5 = logic.computePercentile(array, 0.05)
         percentile15 = logic.computePercentile(array, 0.15)
@@ -809,10 +809,10 @@ class MeshStatisticsTest(ScriptedLoadableModuleTest):
         percentile85 = logic.computePercentile(array, 0.85)
         percentile95 = logic.computePercentile(array, 0.95)
         if percentile5 != 50 or percentile15 != 150 or percentile25 != 250 or percentile50 != 500 or percentile75 != 750 or percentile85 != 850 or percentile95 != 950:
-            print('         Failed ! ')
+            logging.warning('         Failed ! ')
             return False
         else:
-            print('         Passed! ')
+            logging.info('         Passed! ')
         return True
 
     def testOnMesh(self, model, indexOfTheRegionConsidered, fieldToCheck, measurements, NameOftheTest):
@@ -832,8 +832,8 @@ class MeshStatisticsTest(ScriptedLoadableModuleTest):
                         if measurements[i] != [a[1].min, a[1].max, a[1].mean, a[1].std, a[1].percentile5,
                            a[1].percentile15, a[1].percentile25, a[1].percentile50, a[1].percentile75,
                            a[1].percentile85, a[1].percentile95]:
-                            print(measurements[i])
-                            print([a[1].min, a[1].max, a[1].mean, a[1].std, a[1].percentile5,
+                            logging.warning(measurements[i])
+                            logging.warning([a[1].min, a[1].max, a[1].mean, a[1].std, a[1].percentile5,
                            a[1].percentile15, a[1].percentile25, a[1].percentile50, a[1].percentile75,
                            a[1].percentile85, a[1].percentile95])
                             return False

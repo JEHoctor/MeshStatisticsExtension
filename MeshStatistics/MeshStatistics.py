@@ -17,7 +17,12 @@ class MeshStatistics(ScriptedLoadableModule):
         parent.title = 'Mesh Statistics'
         parent.categories = ['Quantification']
         parent.dependencies = []
-        parent.contributors = ['Lucie Macron']
+        parent.contributors = [
+                'Lucie Macron',
+                'Jean-Baptiste Vimort',
+                'Jean-Christophe Fillion-Robin',
+                'James Hoctor',
+                ]
         parent.helpText = """
             The goal of this module is to compute statistics on a model,
             considering a specific region (defined with Pick'n Paint) or on the entire shape.

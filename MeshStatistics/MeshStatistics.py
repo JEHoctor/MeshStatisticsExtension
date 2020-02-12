@@ -772,7 +772,7 @@ class MeshStatisticsTest(ScriptedLoadableModuleTest):
         min, max = logic.computeMinMax(array)
         mean = logic.computeMean(array)
         std = logic.computeStandardDeviation(array)
-        logging.info('min=', min, 'max=', max, 'mean=', mean, 'std=', std)
+        logging.info(' '.join(('min=', str(min), 'max=', str(max), 'mean=', str(mean), 'std=', str(std))))
         if min != 1.0 or max != 1000.0 or mean != 500.5 or std != 288.675:
             logging.warning('      Failed! ')
             return False

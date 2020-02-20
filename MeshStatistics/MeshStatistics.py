@@ -813,6 +813,54 @@ class MeshStatisticsTest(ScriptedLoadableModuleTest):
             return False
         else:
             print('         Passed! ')
+        return self.testPercentileFunction_part2()
+
+    def testPercentileFunction_part2(self):
+        logging.info(' TEST Percentile part 2')
+        logging.info('     Testing against numpy.quantile')
+
+        # There must exist an interpolation mode for which logic.computePercentile
+        # performs the same quantile computation as numpy.quantile. Note that we
+        # exclude from consideration those interpolation modes that can return values
+        # not in the input data.
+        interpolation_modes = [
+                # 'linear',
+                'lower',
+                'higher',
+                # 'midpoint',
+                'nearest',
+                ]
+        # Note the default argument im=im. See the following to understand why this
+        # is crucial:
+        # https://stackoverflow.com/questions/2295290/what-do-lambda-function-closures-capture/2295372#2295372
+        # https://docs.python.org/3/faq/programming.html#why-do-lambdas-defined-in-a-loop-with-different-values-all-return-the-same-result
+        reference_methods = [lambda a, q, im=im: numpy.quantile(a, q, interpolation=im)
+                             for im in interpolation_modes]
+
+        # Generate a list of results for any quantile method.
+        def get_results(quantile_f):
+            # Use both quantiles of interest in the code (0.05 through 0.95),
+            # and a quantile that exposes a bug (0.0).
+            quantiles = [0.0, 0.05, 0.15, 0.25, 0.50, 0.75, 0.85, 0.95]
+            lengths = list(range(1, 10))
+            res = []
+            for l in lengths:
+                data = numpy.arange(l)
+                for q in quantiles:
+                    res.append(quantile_f(data, q))
+            return res
+
+        logic = MeshStatisticsLogic()
+        result_computePercentile = get_results(logic.computePercentile)
+        results_numpy_quantile = [get_results(rm) for rm in reference_methods]
+
+        if result_computePercentile in results_numpy_quantile:
+            logging.info('         Passed! ')
+        else:
+            logging.warning('         Failed ! ')
+            logging.warning(f'result_computePercentile:\n{numpy.array([result_computePercentile])}')
+            logging.warning(f'results_numpy_quantile:\n{numpy.array(results_numpy_quantile)}')
+            return False
         return True
 
     def testOnMesh(self, model, indexOfTheRegionConsidered, fieldToCheck, measurements, NameOftheTest):
